@@ -8,6 +8,7 @@ double* ZeidelMatr(const double *, uint32_t);
 
 int main()
 {
+	setlocale(LC_ALL, "Rus");
 	uint16_t N = 0;
 //	std::cin >> N;
 	N = 100;
@@ -30,23 +31,37 @@ int main()
 	for (uint16_t i = 0; i < N; i++)
 		data[N * N + i] = static_cast<double>(i + 1);
 	double* zeidresult = ZeidelMatr(data, N);
-	if (zeidresult)
-	{
-		for (uint16_t j = 0; j < N; j++)
-			std::cout << zeidresult[j] << '\n';
-		delete[] zeidresult;
-	}
-	else
-		std::cout << "Error Zeidel\n";
+//	if (zeidresult)
+//	{
+//		for (uint16_t j = 0; j < N; j++)
+//			std::cout << zeidresult[j] << '\n';
+//		delete[] zeidresult;
+//	}
+//	else
+//		std::cout << "Error Zeidel\n";
 	double* result = GaussMatr(data, N);
-	if (result)
+//	if (result)
+//	{
+//		for (uint16_t j = 0; j < N; j++)
+//			std::cout << result[j]<<'\n';
+//		delete[] result;
+//	}
+//	else
+//		std::cout << "Error Gauss\n";
+
+	if (result && zeidresult)
 	{
-		for (uint16_t j = 0; j < N; j++)
-			std::cout << result[j]<<'\n';
-		delete[] result;
+		double SqrtDispersion = 0.0;
+		for (uint32_t i = 0; i < N; i++)
+		{
+			SqrtDispersion += (result[i] - zeidresult[i]) * (result[i] - zeidresult[i]);
+		}
+		SqrtDispersion /= static_cast<double>(N);
+		SqrtDispersion = std::sqrt(SqrtDispersion);
+		std::cout << "Среднеквадрачиное оклонение методов = "<< SqrtDispersion << std::endl;
 	}
-	else
-		std::cout << "Error Gauss\n";
+	delete[] zeidresult;
+	delete[] result;
 	system("PAUSE");
 	delete[] data;
 	return 0;
