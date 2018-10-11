@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cinttypes>
-#define ACCURACY 1e-3
-#define ITERATIONS 20
+#define ACCURACY 1e-6
+#define ITERATIONS 2000
 
 double* GaussMatr(double *, uint32_t);
 double* ZeidelMatr(const double *, uint32_t);
@@ -9,15 +9,26 @@ double* ZeidelMatr(const double *, uint32_t);
 int main()
 {
 	uint16_t N = 0;
-	std::cin >> N;
+//	std::cin >> N;
+	N = 100;
 	double *data = new double[N * (N + 1)];
-	for (uint16_t i = 0; i < N + 1; i++)
+	for (uint16_t i = 0; i < N; i++)
 	{
-		std::cout <<"Vvod vectora\n";
 		for (uint16_t j = 0; j < N; j++)
-			std::cin >> data[i * N + j];
+		{
+			if (j + 2 > i)
+			{
+				if (i == j)
+					data[i * N + j] = 10.0;
+				else
+					data[i * N + j] = 1.0 / static_cast<double>((j + 1));
+			}
+			else
+				data[i * N + j] = 0.0;
+		}
 	}
-//	float da[12] = {1, 2, 3, 1, 3, 7, 8, 2, 1, 0, 0, 0};
+	for (uint16_t i = 0; i < N; i++)
+		data[N * N + i] = static_cast<double>(i + 1);
 	double* zeidresult = ZeidelMatr(data, N);
 	if (zeidresult)
 	{
@@ -87,14 +98,14 @@ double * ZeidelMatr(const double *Data, uint32_t Dimension)
 		do
 		{
 			SumSquare = 0.0;
-			for (int i = 0; i < Dimension; i++)
+			for (uint32_t i = 0; i < Dimension; i++)
 				p[i] = res[i];
 			for (uint32_t i = 0; i < Dimension; i++)
 			{
 				double var = 0;
-				for (int j = 0; j < i; j++)
+				for (uint32_t j = 0; j < i; j++)
 					var += (Data[j * Dimension + i] * res[j]);
-				for (int j = i + 1; j < Dimension; j++)
+				for (uint32_t j = i + 1; j < Dimension; j++)
 					var += (Data[j * Dimension + i] * p[j]);
 				res[i] = (Data[Dimension * Dimension + i] - var) / Data[i * Dimension + i];
 				SumSquare += (res[i] - p[i]) * (res[i] - p[i]);
@@ -103,10 +114,14 @@ double * ZeidelMatr(const double *Data, uint32_t Dimension)
 
 		} while ((SumSquare > ACCURACY) && (counter < ITERATIONS));
 		delete[] p;
-		return res;
+		if(counter < ITERATIONS)
+			return res;
+		else
+		{
+			delete[] res;
+			return nullptr;
+		}
 	}
 	else
-	{
 		return nullptr;
-	}
 }
