@@ -17,6 +17,7 @@ private:
 	uint32_t Find(double) const;
 public:
 	Interpolator(const std::vector<Point>&);
+	~Interpolator();
 	Interpolator();
 	int SetUp();
 	int SetUp(const std::vector<Point>&);
