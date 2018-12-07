@@ -28,10 +28,13 @@ uint32_t Interpolator::Find(double x) const
 Interpolator::Interpolator(const std::vector<Point>& Array): Coefficients(nullptr), Points(Array), Size(Array.size()), Ready(false)
 {}
 
-Interpolator::Interpolator()
+Interpolator::~Interpolator()
 {
 	delete[] Coefficients;
 }
+
+Interpolator::Interpolator():Ready(false), Coefficients(nullptr), Size(0)
+{}
 
 int Interpolator::SetUp()
 {
@@ -79,7 +82,7 @@ int Interpolator::SetUp()
 	}
 	//boundary condition
 	matrix[2 * N + N - 2] = 2.0;
-	matrix[N * N + N - 2] = 0.01;
+	matrix[N * N + N - 2] = 0.0;
 
 	Coefficients = GaussMatr(matrix.data(), N);
 //	Coefficients = ZeidelMatr(matrix.data(), N);
